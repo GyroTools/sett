@@ -1,7 +1,7 @@
-FROM ubuntu:20.04
+FROM python:3.9
 
 RUN apt-get update -y
-RUN apt-get install -y python3 python3-pip gnupg2
+RUN apt-get install -y gnupg2
 RUN pip install sett
 
 RUN mkdir /src

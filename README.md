@@ -28,47 +28,54 @@
 
 5. Copy/Paste the following task into the code window:
 
-    ```
-    # Encrypt and send data to leonard med with the sett tool
-    inputs: 
-    transferid: 
-        type: string 
-        default: 191  
-    recipient: 
-        type: string  
-        default: 6D37368822AA6953FA64FB6A31E8B5B93920AAB0   
-    sender: 
-        type: string       
-        default: buehrer@biomed.ee.ethz.ch  
-    nifti:
-        type: dataset
-        dataset_type: nifti1                    
-        push_data: true
-    
+```
+# Encrypt and send data to leonard med with the sett tool
+stages:
+  - enc   
+  - send
 
-    encrypt:     
-    host: encrypt_host   
-    image: gyrotools/sett  
-    script_type: command
-    env:    
-        PGP_KEY: '{{ PGP_KEY }}'
-        PGP_KEY_PWD: '{{ PGP_KEY_PWD  }}'
-    script: |            
-        encrypt --sender {{ inputs.sender.value }} --recipient {{ inputs.recipient.value }} --dtr-id {{ inputs.transferid.value }} --purpose TEST --passphrase-cmd "cat /pgp/key.pw" --output {{ output_dir }}/agora_data.zip {{ data_dir }}
-    artifacts:
-        encrypted:
-        path: "{{ output_dir }}/agora_data.zip" 
+inputs: 
+  transferid: 
+    type: string 
+    default: 191  
+  recipient: 
+    type: string  
+    default: 6D37368822AA6953FA64FB6A31E8B5B93920AAB0   
+  sender: 
+    type: string       
+    default: buehrer@biomed.ee.ethz.ch  
+  nifti:
+    type: dataset
+    dataset_type: nifti1                    
+    push_data: true
+  
 
-    transfer:     
-    host: send_host   
-    image: gyrotools/sett  
-    script_type: command
-    env:    
-        PGP_KEY: '{{ PGP_KEY }}'
-        PGP_KEY_PWD: '{{ PGP_KEY_PWD  }}'
-    script: |
-        transfer --protocol=sftp --protocol-args='{"host": "lm-sftransfer-01.leomed.ethz.ch","username":"dp-balgrist-dm", "destination_dir":"DIR", "pkey":"{{ SSH_KEY }}"}' {{ artifacts.encrypted.path }}
-    ```
+encrypt:     
+  stage: enc
+  host: encrypt_host   
+  image: gyrotools/sett  
+  script_type: command
+  env:    
+    PGP_KEY: '{{ PGP_KEY }}'
+    PGP_KEY_PWD: '{{ PGP_KEY_PWD  }}'
+  script: |            
+    encrypt --sender {{ inputs.sender.value }} --recipient {{ inputs.recipient.value }} --dtr-id {{ inputs.transferid.value }} --purpose TEST --passphrase-cmd "cat /pgp/key.pw" --output {{ output_dir }}/agora_data.zip {{ data_dir }}
+  artifacts:
+    encrypted:
+      path: "{{ output_dir }}/agora_data.zip" 
+
+transfer:  
+  stage: send  
+  host: send_host   
+  image: gyrotools/sett  
+  script_type: command
+  env:    
+    PGP_KEY: '{{ PGP_KEY }}'
+    PGP_KEY_PWD: '{{ PGP_KEY_PWD  }}'
+  script: |
+    transfer --protocol=sftp --protocol-args='{"host": "lm-sftransfer-01.leomed.ethz.ch","username":"dp-balgrist-dm", "destination_dir":"DIR", "pkey":"{{ SSH_KEY }}"}' {{ artifacts.encrypted.path }}
+
+```
 
     The task does the following:
 

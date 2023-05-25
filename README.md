@@ -54,15 +54,16 @@ encrypt:
   stage: enc
   host: encrypt_host   
   image: gyrotools/sett  
+  container_run_arguments: --pull=always     
   script_type: command
   env:    
     PGP_KEY: '{{ PGP_KEY }}'
     PGP_KEY_PWD: '{{ PGP_KEY_PWD  }}'
   script: |            
-    encrypt --sender {{ inputs.sender.value }} --recipient {{ inputs.recipient.value }} --dtr-id {{ inputs.transferid.value }} --purpose TEST --passphrase-cmd "cat /pgp/key.pw" --output {{ output_dir }}/agora_data.zip {{ data_dir }}
+    sett encrypt --sender {{ inputs.sender.value }} --recipient {{ inputs.recipient.value }} --dtr-id {{ inputs.transferid.value }} --purpose TEST --passphrase-cmd "cat /pgp/key.pw" --output {{ output_dir }}/mib_{{ timestamp.date1 }}T{{ timestamp.time1 }}.zip {{ data_dir }}
   artifacts:
     encrypted:
-      path: "{{ output_dir }}/agora_data.zip" 
+      path: "{{ output_dir }}/mib_{{ timestamp.date1 }}T{{ timestamp.time1 }}.zip" 
 
 transfer:  
   stage: send  
@@ -70,11 +71,9 @@ transfer:
   image: gyrotools/sett  
   script_type: command
   env:    
-    PGP_KEY: '{{ PGP_KEY }}'
-    PGP_KEY_PWD: '{{ PGP_KEY_PWD  }}'
-  script: |
-    transfer --protocol=sftp --protocol-args='{"host": "lm-sftransfer-01.leomed.ethz.ch","username":"dp-balgrist-dm", "destination_dir":"DIR", "pkey":"{{ SSH_KEY }}"}' {{ artifacts.encrypted.path }}
-
+    SSH_KEY: '{{ SSH_KEY }}' 
+  script: |  
+    sett transfer --protocol=sftp --protocol-args='{"host":"lm-sftransfer-01.leomed.ethz.ch","username":"dp-balgrist-dm","destination_dir":"upload","pkey":"/ssh/id_rsa","pkey_password":"{{ SSH_PASSWORD }}"}' {{ artifacts.encrypted.path }}    
 ```
 
     The task does the following:

@@ -60,7 +60,7 @@ encrypt:
     PGP_KEY: '{{ PGP_KEY }}'
     PGP_KEY_PWD: '{{ PGP_KEY_PWD  }}'
   script: |            
-    sett encrypt --sender {{ inputs.sender.value }} --recipient {{ inputs.recipient.value }} --dtr-id {{ inputs.transferid.value }} --purpose TEST --passphrase-cmd "cat /pgp/key.pw" --output {{ output_dir }}/mib_{{ timestamp.date1 }}T{{ timestamp.time1 }}.zip {{ data_dir }}
+    encrypt --sender {{ inputs.sender.value }} --recipient {{ inputs.recipient.value }} --dtr-id {{ inputs.transferid.value }} --purpose TEST --passphrase-cmd "cat /pgp/key.pw" --output {{ output_dir }}/mib_{{ timestamp.date1 }}T{{ timestamp.time1 }}.zip {{ data_dir }}
   artifacts:
     encrypted:
       path: "{{ output_dir }}/mib_{{ timestamp.date1 }}T{{ timestamp.time1 }}.zip" 
@@ -73,7 +73,7 @@ transfer:
   env:    
     SSH_KEY: '{{ SSH_KEY }}' 
   script: |  
-    sett transfer --protocol=sftp --protocol-args='{"host":"lm-sftransfer-01.leomed.ethz.ch","username":"dp-balgrist-dm","destination_dir":"upload","pkey":"/ssh/id_rsa","pkey_password":"{{ SSH_PASSWORD }}"}' {{ artifacts.encrypted.path }}    
+    transfer --protocol=sftp --protocol-args='{"host":"lm-sftransfer-01.leomed.ethz.ch","username":"dp-balgrist-dm","destination_dir":"upload","pkey":"/ssh/id_rsa","pkey_password":"{{ SSH_PASSWORD }}"}' {{ artifacts.encrypted.path }}    
 ```
 
     The task does the following:

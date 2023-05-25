@@ -19,14 +19,18 @@ elif [[ ! -z "${PGP_KEY}" ]]; then
   fi
 
   gpg -v --batch --import <(echo "$PGP_KEY")  
+  
+  if [ ! -f "/pgp/key.pw" ]; then
+    echo "ERROR: key password not found in /pgp/key.pw" 
+    exit 1 
+  fi
+
+elif [[ ! -z "${SSH_KEY}" ]]; then
+  echo "SSH_KEY found."  
+  echo "${SSH_KEY}" > /ssh/id_rsa
 
 else
-  echo "ERROR: no file or environment variable with th pgp key found" 
-  exit 1 
-fi
-
-if [ ! -f "/pgp/key.pw" ]; then
-  echo "ERROR: key password not found in /pgp/key.pw" 
+  echo "ERROR: no environment variable with the pgp or ssh key found" 
   exit 1 
 fi
 

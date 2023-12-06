@@ -1,6 +1,6 @@
 # sett
 
-## Create an Agora Task
+## Create an Agora Task 
 
 1. Go to the task list and then click on "Hosts" on the left sidebar
  

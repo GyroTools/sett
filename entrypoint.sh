@@ -34,4 +34,6 @@ else
   exit 1 
 fi
 
+python /src/set_sett_to_legacy_mode.py
+
 sett "$@"

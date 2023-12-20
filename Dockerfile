@@ -12,5 +12,7 @@ COPY ./entrypoint.sh /src
 RUN chmod +x /src/entrypoint.sh
 RUN dos2unix /src/entrypoint.sh
 
+COPY ./set_sett_to_legacy_mode.py /src
+
 WORKDIR /src
 ENTRYPOINT ["./entrypoint.sh"]

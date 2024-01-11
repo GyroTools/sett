@@ -2,7 +2,7 @@ FROM python:3.9
 
 RUN apt-get update -y
 RUN apt-get install -y gnupg2 dos2unix
-RUN pip install sett
+RUN pip install sett --upgrade
 
 RUN mkdir /src
 RUN mkdir /pgp

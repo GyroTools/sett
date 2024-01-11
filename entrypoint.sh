@@ -1,4 +1,4 @@
-#!/bin/bash
+t#!/bin/bash
 
 set -e
 
@@ -35,5 +35,5 @@ else
 fi
 
 python /src/set_sett_to_legacy_mode.py
-
+sett --version
 sett "$@"

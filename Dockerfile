@@ -4,6 +4,7 @@ RUN apt-get update -y
 RUN apt-get install -y gnupg2 dos2unix
 RUN apt-get install -y python3-pip
 RUN pip3 install sett==4.4.2
+RUN pip3 --version
 
 RUN mkdir /src
 RUN mkdir /pgp
